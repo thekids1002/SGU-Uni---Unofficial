@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:sgu_uni/models/auth/user.dart';
 import 'package:sgu_uni/screen/home.dart';
 import 'package:sgu_uni/services/api_service.dart';
+import 'package:sgu_uni/utils/message_util.dart';
 import 'package:sgu_uni/utils/shared_preferences_utils.dart';
 import 'package:sgu_uni/validation/login_validator.dart';
-import '../widget/lablet_ext_field.dart';
+
+import '../widget/label_text_field.dart';
 
 class Loginform extends StatefulWidget {
   const Loginform({super.key});
@@ -18,6 +21,11 @@ class _LoginformState extends State<Loginform> {
   final userNameController = TextEditingController();
   final passwordController = TextEditingController();
 
+  String credentialUserName = '';
+  String credentialPassword = '';
+
+  final ApiService apiService = ApiService();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,12 +34,12 @@ class _LoginformState extends State<Loginform> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            LabeledTextField(
+            LabelTextField(
               labelText: "Tài khoản",
               controller: userNameController,
               validator: LoginValidator.validateStudentId,
             ),
-            LabeledTextField(
+            LabelTextField(
               labelText: "Mật khẩu",
               controller: passwordController,
               obscureText: true,
@@ -43,7 +51,7 @@ class _LoginformState extends State<Loginform> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      _login();
+                      handleLogin();
                     }
                   },
                   child: const Text('Đăng Nhập'),
@@ -56,8 +64,9 @@ class _LoginformState extends State<Loginform> {
     );
   }
 
-  final ApiService apiService = ApiService();
-  Future<void> _login() async {
+  Future<void> handleLogin() async {
+    context.loaderOverlay.show();
+
     final username = userNameController.text.trim();
     final password = passwordController.text.trim();
 
@@ -68,33 +77,64 @@ class _LoginformState extends State<Loginform> {
       'grant_type': 'password',
     };
 
-    // Chuyển body thành x-www-form-urlencoded
-    final encodedBody = body.entries
-        .map((entry) =>
-            '${Uri.encodeComponent(entry.key)}=${Uri.encodeComponent(entry.value)}')
-        .join('&');
+    User loginResponse = User();
 
     try {
       // Gọi phương thức post từ ApiService và parse JSON sang kiểu User
-      final loginResponse = await apiService.post<User>(
+      loginResponse = await apiService.post<User>(
         'auth/login',
         User.fromJson,
-        urlEncodedBody: encodedBody, // Gửi body dưới dạng chuỗi đã được encode
+        urlEncodedBody: body, // Gửi body dưới dạng chuỗi đã được encode url
         headers: {
           'ua': await SharedPreferencesUtils.getString('ua'),
           'idpc': '0',
           'Accept': 'application/json, text/plain, */*',
         },
       );
+
       await SharedPreferencesUtils.setObject('currentUser', loginResponse);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
-      );
-      // Điều hướng đến màn hình chính hoặc xử lý thành công ở đây
+
+      if (mounted) {
+        // lưu thông tin đăng nhập
+        saveUser(username, password);
+
+        context.loaderOverlay.hide();
+        // Điều hướng đến màn hình chính hoặc xử lý thành công ở đây
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+        );
+      }
     } catch (error) {
       print('Error during login: $error');
+      if (mounted) {
+        context.loaderOverlay.hide();
+        MessageUtil.toast(loginResponse.message!);
+      }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadLoginCredential();
+  }
+
+  Future<void> loadLoginCredential() async {
+    final credentials = await Future.wait([
+      SharedPreferencesUtils.getString('username'),
+      SharedPreferencesUtils.getString('password'),
+    ]);
+
+    setState(() {
+      userNameController.text = credentials[0]; // username
+      passwordController.text = credentials[1]; // password
+    });
+  }
+
+  Future<void> saveUser(String userName, String password) async {
+    await SharedPreferencesUtils.setString('username', userName);
+    await SharedPreferencesUtils.setString('password', password);
   }
 }

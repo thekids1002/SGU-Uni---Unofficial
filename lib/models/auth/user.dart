@@ -16,25 +16,28 @@ class User {
   String? wcf;
   String? expires;
   String? issued;
+  String? message;
 
-  User(
-      {this.accessToken,
-      this.tokenType,
-      this.expiresIn,
-      this.refreshToken,
-      this.userName,
-      this.id,
-      this.logtime,
-      this.code,
-      this.result,
-      this.passtype,
-      this.name,
-      this.principal,
-      this.idpc,
-      this.roles,
-      this.wcf,
-      this.expires,
-      this.issued});
+  User({
+    this.accessToken,
+    this.tokenType,
+    this.expiresIn,
+    this.refreshToken,
+    this.userName,
+    this.id,
+    this.logtime,
+    this.code,
+    this.result,
+    this.passtype,
+    this.name,
+    this.principal,
+    this.idpc,
+    this.roles,
+    this.wcf,
+    this.expires,
+    this.issued,
+    this.message,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
     accessToken = json['access_token'];
@@ -54,6 +57,7 @@ class User {
     wcf = json['wcf'];
     expires = json['.expires'];
     issued = json['.issued'];
+    message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
@@ -75,6 +79,7 @@ class User {
     data['wcf'] = this.wcf;
     data['.expires'] = this.expires;
     data['.issued'] = this.issued;
+    data['message'] = this.message;
     return data;
   }
 }

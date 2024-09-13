@@ -20,15 +20,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: currentUser != null
-            ? Column(
-                children: [
-                  Text('Hello, ${currentUser!.name}'),
-                ],
-              )
-            : const CircularProgressIndicator(),
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          child: currentUser != null
+              ? Column(
+                  children: [
+                    Text('Hello, ${currentUser!.name}'),
+                  ],
+                )
+              : const CircularProgressIndicator(),
+        ),
       ),
     );
   }
