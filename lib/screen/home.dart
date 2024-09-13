@@ -90,38 +90,47 @@ class _MainScreenState extends State<MainScreen> {
                 "Trường Đại Học\nSài Gòn",
                 textAlign: TextAlign.start,
                 style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     color: Colors.white,
-                    fontWeight: FontWeight.w500),
+                    fontWeight: FontWeight.w400),
               )
             ],
           ),
-          leadingWidth: MediaQuery.of(context).size.width * 0.5,
+          leadingWidth: MediaQuery.of(context).size.width * 0.45,
           actions: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Xin chào,\n${currentUser!.name?.toUpperCase()}',
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        height: 1.4,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  SvgPicture.asset(
-                    "assets/icons/no-profile-picture.svg",
-                    width: 40,
-                    height: 40,
-                  ),
-                ],
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.51,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: SizedBox(
+                        width: 250,
+                        child: Text(
+                          'Xin chào,\n${currentUser!.name?.toUpperCase()}',
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              height: 1.4,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    SvgPicture.asset(
+                      "assets/icons/no-profile-picture.svg",
+                      width: 40,
+                      height: 40,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
