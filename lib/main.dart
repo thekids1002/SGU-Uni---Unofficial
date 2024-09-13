@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -58,12 +59,11 @@ class _SplashScreenState extends State<SplashScreen> {
           print('UA saved: $ua');
         }
 
-        // Chờ 3 giây và điều hướng đến màn hình Login
-        Timer(const Duration(seconds: 3), () {
+        if (mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const LoginScreen()),
           );
-        });
+        }
       } else {
         print('Failed to load data');
         navigateToLogin();

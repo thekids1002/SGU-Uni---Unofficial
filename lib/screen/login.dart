@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:sgu_uni/form/login_form.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,28 +14,32 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      body: SizedBox(
-        height: screenHeight,
-        width: screenWidth * 1,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Image.asset(
-                  "assets/logo/logo.png",
-                  height: 150,
-                  width: 150,
-                ),
+    return SafeArea(
+      child: Scaffold(
+        body: LoaderOverlay(
+          child: SizedBox(
+            height: screenHeight,
+            width: screenWidth,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Image.asset(
+                      "assets/logo/logo.png",
+                      height: 150,
+                      width: 150,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 50),
+                    child: const Loginform(),
+                  )
+                ],
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: const Loginform(),
-              )
-            ],
+            ),
           ),
         ),
       ),
